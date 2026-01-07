@@ -1,0 +1,40 @@
+name: tests
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, labeled]
+
+jobs:
+  unit:
+    # ⚠️ VULNERABLE CONDITION - Inverted logic!
+    # This runs if: (fork PR) OR (has label)
+    # Meaning: Fork PRs ALWAYS run without label!
+    if: |
+      github.event.pull_request.head.repo.full_name != github.repository ||
+      contains(github.event.pull_request.labels.*.name, 'tests: run')
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          # ⚠️ VULNERABLE: Checks out fork code in privileged context
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Maven Tests
+        run: |
+          echo "Running Maven tests..."
+          # ⚠️ VULNERABLE: Executes attacker's pom.xml
+          mvn --version
+          mvn clean verify
