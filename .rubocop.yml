@@ -1,6 +1,2 @@
 require:
   - rubocop-github
-GitHub/RailsControllerRenderPathsExist:
-  Enabled: true
-  ViewPath:
-    - app/views
