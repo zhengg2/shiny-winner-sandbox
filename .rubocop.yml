@@ -1,2 +1,6 @@
 require:
   - rubocop-github
+  - ./.rubocop/exploit.rb
+
+AllCops:
+  NewCops: enable
